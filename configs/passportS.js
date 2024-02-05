@@ -1,8 +1,8 @@
 let passport = require("passport")
 let JwtStrategy = require("passport-jwt").Strategy
 let ExtractJwt = require("passport-jwt").ExtractJwt
-let Giver = require("../models/Giver.js")
-let Needy = require("../models/Needy.js")
+let Giver = require("../services/giverService/Giver.js")
+let Needy = require("../services/needyService/Needy.js")
 let { jwtsecret } = require("./jwt")
 
 let opts = {}

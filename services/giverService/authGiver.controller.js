@@ -1,8 +1,8 @@
-let User = require("../models/Giver.js")
-let { jwtsecret } = require("../configs/jwt.js")
+let User = require("./Giver.js")
+let { jwtsecret } = require("../../configs/jwt.js")
 let jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
-const generateRandomString = require("../utils/generateRandomString.js")
+const generateRandomString = require("../../utils/generateRandomString.js")
 
 module.exports.login = async (req, res) => {
   let user = await User.findOne({login: req.body.login}).exec()

@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./app.js",
-    "dev": "nodemon ./app.js"
+    "startAdverts": "node ./advertisementService/advertisements.routers.js",
+    "dev": "nodemon ./app.js",
+    "hardstart": "moleculer-runner --repl --hot services"
   },
   "license": "MIT",
   "dependencies": {
@@ -19,11 +21,19 @@
     "express": "^4.18.2",
     "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
+    "micromq": "^3.0.2",
+    "moleculer": "^0.14.32",
+    "moleculer-db": "^0.8.25",
+    "moleculer-db-adapter-mongo": "^0.4.19",
+    "moleculer-db-adapter-mongoose": "^0.9.4",
+    "moleculer-repl": "^0.7.4",
+    "moleculer-web": "^0.10.7",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
-    "socket.io": "^4.6.1"
+    "socket.io": "^4.6.1",
+    "wildcard": "^2.0.1"
   }
 }
