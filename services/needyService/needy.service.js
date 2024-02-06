@@ -124,14 +124,26 @@ module.exports = {
             },
             async handler(ctx) {
                 try {
-                    let user = await Giver.create({ password: ctx.params.password, login: ctx.params.login, phone: ctx.params.phone, fcmToken: ctx.params.tokenFCM })
+                    let user = await this.adapter.model.create({ password: ctx.params.password, login: ctx.params.login, phone: ctx.params.phone, fcmToken: ctx.params.tokenFCM })
                     return user
                 } catch (err) {
                     ctx.meta.$statusCode = 400
                     return { message: err.message }
                 }
             }
-        }
+        },
+        getLoginPhoneData: {
+            params: {
+                login: {type: "string"},
+                phone: {type: "string"}
+            },
+            async handler(ctx) {
+                const isNeedyWithPhone = await this.adapter.model.findOne({ phone: ctx.params.phone }).exec()
+                const isNeedyWithLogin = await this.adapter.model.findOne({ login: ctx.params.login }).exec()
+                const isNeedy = await this.adapter.model.findOne({ phone: ctx.params.phone, login: ctx.params.login }).exec()
+                return { isLogin: isNeedyWithLogin != null, isPhone: isNeedyWithPhone != null, isUser: isNeedy != null, userForLogin: isNeedyWithPhone }
+            }
+        },
     },
     methods: {
         setMarket() {},

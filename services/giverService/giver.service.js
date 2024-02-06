@@ -119,7 +119,7 @@ module.exports = {
                 const isGiverWithPhone = await this.adapter.model.findOne({ phone: ctx.params.phone }).exec()
                 let isUser = await this.adapter.model.findOne({ login: ctx.params.login, phone: ctx.params.phone }).exec()
                 
-                return { isLogin: isGiverWithLogin, isPhone: isGiverWithPhone, isUser }
+                return { isLogin: isGiverWithLogin != null, isPhone: isGiverWithPhone != null, isUser: isUser != null, userForLogin: isGiverWithLogin }
             }
         },
         create: {
@@ -131,7 +131,7 @@ module.exports = {
             },
             async handler(ctx) {
                 try {
-                    let user = await Giver.create({ password: ctx.params.password, login: ctx.params.login, phone: ctx.params.phone, fcmToken: ctx.params.tokenFCM, authID: generateRandomString(10) })
+                    let user = await this.adapter.model.create({ password: ctx.params.password, login: ctx.params.login, phone: ctx.params.phone, fcmToken: ctx.params.tokenFCM, authID: generateRandomString(10) })
                     return user
                 } catch (err) {
                     ctx.meta.$statusCode = 400

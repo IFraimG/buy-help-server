@@ -74,11 +74,12 @@ module.exports = {
     },
     methods: {
         async signup(params, typeUser) {
-            let { isPhone, isLogin, isUser } = this.broker.call(`${typeUser}.getLoginPhoneData`, { phone: params.phone, login: params.login })
-            if (isLogin != null || isUser) {
+            let result = await this.broker.call(`${typeUser}.getLoginPhoneData`, { phone: params.phone, login: params.login })
+
+            if (result.isLogin || result.isUser) {
                 return {error: { statusCode: 403, message: "Пользователь с таким логином уже существует" }}
             }
-            if (isPhone != null) {
+            if (result.isPhone) {
                 return {error: { statusCode: 403, message: "Пользователь с таким телефоном уже существует" }}
             }
 
@@ -96,21 +97,21 @@ module.exports = {
             return {token: "Bearer " + token, user: { login: user.login, phone: user.phone, id: user._id }, error: null}
         },
         async login(params, typeUser) {
-            let user = await this.broker.call(`${typeUser}.getLoginPhoneData`, { login: params.login, phone: "" })
-            if (!user) return {error: { statusCode: 404 }, token: ""}
+            let user = await this.broker.call(`${typeUser}.getLoginPhoneData`, { login: params.login, phone: params.phone })
+            if (!user.isLogin) return {error: { statusCode: 404 }, token: ""}
             
-            const match = await bcrypt.compare(params.password, user.password);
+            const match = await bcrypt.compare(params.password, user.userForLogin.password);
             if (!match) return {error: { statusCode: 400 }, token: ""}
             else {
                 let token = jwt.sign({
-                  sub: typeUser == "needy" ? user._id : user.authID,
-                  phone: user.phone,
-                  login: user.login,
-                  id: user._id,
+                  sub: typeUser == "needy" ? user.userForLogin._id : user.userForLogin.authID,
+                  phone: user.userForLogin.phone,
+                  login: user.userForLogin.login,
+                  id: user.userForLogin._id,
                   type: typeUser,
                 }, jwtsecret)
 
-                return {token: "Bearer " + token, user: { login: user.login, phone: user.phone, id: user._id }, error: null}
+                return {token: "Bearer " + token, user: { login: user.userForLogin.login, phone: user.userForLogin.phone, id: user.userForLogin._id }, error: null}
             }
         }
     }
