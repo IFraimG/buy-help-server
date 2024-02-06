@@ -144,6 +144,15 @@ module.exports = {
                 return { isLogin: isNeedyWithLogin != null, isPhone: isNeedyWithPhone != null, isUser: isNeedy != null, userForLogin: isNeedyWithPhone }
             }
         },
+        findByID: {
+            params: {
+                id: {type: "string"}
+            },
+            async handler(ctx) {
+                let result = await this.adapter.model.findById(ctx.params.id).exec()
+                return result
+            }
+        }
     },
     methods: {
         setMarket() {},

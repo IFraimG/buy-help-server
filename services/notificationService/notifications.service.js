@@ -11,6 +11,10 @@ module.exports = {
     actions: {
         getNotifications: {
             rest: "GET /get_notifications",
+            params: {
+                userID: { type: "string" },
+                typeOfUser: { type: "string" }
+            },
             async handler(ctx) {
                 try {
                     const notifications = await this.adapter.model.find({ userID: ctx.params.userID, typeOfUser: ctx.params.typeOfUser }).exec()

@@ -71,6 +71,18 @@ module.exports = {
                 return result.error
             }
         },
+        testGiver: {
+            rest: "GET /giver/test",
+            async handler(ctx) {
+                return { isAuth: true }
+            }
+        },
+        testNeedy: {
+            rest: "GET /needy/test",
+            async handler(ctx) {
+                return { isAuth: true }
+            }
+        }
     },
     methods: {
         async signup(params, typeUser) {

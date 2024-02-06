@@ -8,22 +8,15 @@ module.exports = {
     mixins: [ApiService],
 	settings: {
 		routes: [
-            {
-                whitelist: [
-                    "notifications.*",
-                    "needy.*",
-                    "giver.*",
-                    "advertisements.*",
-                ],
-                autoAliases: true,
-                // bodyParsers: {
-                //     json: true,
-                //     urlencoded: { extended: true }
-                // },
-                authentication: true,
-                authorization: true
-                // mergeParams: false
-            },
+            // {
+            //     path: "/auth",
+            //     aliases: {
+            //         "GET /giver/test": "auth.testGiver",
+            //         "GET /needy/test": "auth.testNeedy"
+            //     },
+            //     authorization: true,
+			// 	authentication: true,
+            // },
             {
 				path: "/auth",
 				authorization: false,
@@ -38,7 +31,25 @@ module.exports = {
                     json: true,
                     urlencoded: { extended: true }
                 },
-			}
+			},
+            {
+                whitelist: [
+                    "notifications.*",
+                    "needy.*",
+                    "giver.*",
+                    "advertisements.*",
+                    "auth.testGiver",
+                    "auth.testNeedy"
+                ],
+                autoAliases: true,
+                // bodyParsers: {
+                //     json: true,
+                //     urlencoded: { extended: true }
+                // },
+                authentication: true,
+                authorization: true
+                // mergeParams: false
+            },
         ],
         cors: {
             origin: "*",
