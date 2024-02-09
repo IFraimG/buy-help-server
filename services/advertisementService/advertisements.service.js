@@ -43,7 +43,7 @@ module.exports = {
                     
                     return result
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -117,7 +117,7 @@ module.exports = {
                     
                     return result
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -143,7 +143,7 @@ module.exports = {
                     
                     return advertisement
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -207,7 +207,7 @@ module.exports = {
                     }
                     return result
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -228,7 +228,7 @@ module.exports = {
                     }
                     return result
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -249,7 +249,7 @@ module.exports = {
 
                     return result
                   } catch (err) {
-                    console.log(err.message);
+                    this.logger.info(err.message);
                     return { message: err.message }
                   }
             }
@@ -295,7 +295,7 @@ module.exports = {
                 if (adverts.length == 0) return {error: {message: "NotFound", statusCode: 404 }}
                 return { result: adverts, error: null }
             } catch (err) {
-                console.log(err.message);
+                this.logger.info(err.message);
                 return { message: err.message }
             }
         },

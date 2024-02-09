@@ -42,7 +42,7 @@ module.exports = {
                     
                     return { fcmToken: needy.fcmToken }
                 } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return {message: error.message}
                 }
             }
@@ -94,7 +94,7 @@ module.exports = {
                     const result = await needy.save()
                     return result
                   } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     ctx.meta.$statusCode = 400
                     return {message: error.message}
                   
@@ -114,7 +114,7 @@ module.exports = {
                     
                     return needy
                   } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return {message: error.message}
                   }
             }
@@ -172,7 +172,7 @@ module.exports = {
                     return { market: needy.market }
                   } catch (error) {
                     ctx.meta.$statusCode = 404
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return { message: error.message }
                   }
             }

@@ -14,8 +14,8 @@ module.exports = {
                 data: { type: "array" }
             },
             async handler(ctx) {
-                console.log(ctx.params);
                 let chat = await this.adapter.model.findOne({ users: ctx.params.data }).exec()
+                this.logger.info(chat);
                 if (chat != null) return chat
                     
                 let user = await this.broker.call("needy.findById", {id: ctx.params.data[1]})

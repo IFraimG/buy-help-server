@@ -19,7 +19,9 @@ module.exports = {
             create_chat: {
                 async handler (ctx) {
                     let chat = await this.broker.call("chat.create", { data: ctx.params })
-                    console.log(chat);
+
+                    this.logger.info(chat)
+
                     ctx.socket.emit("getCreatedChat", chat)
                 }
             },
@@ -48,7 +50,6 @@ module.exports = {
             },
             get_messages: {
                 async handler(ctx) {
-                    console.log(ctx.params);
                     let result = await this.broker.call("message.getMessages", { chatID: ctx.params })
                     ctx.socket.emit("set_messages", { result })
                 }

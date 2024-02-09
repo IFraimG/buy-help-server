@@ -105,7 +105,7 @@ module.exports = {
                 id: user._id,
                 type: typeUser,
               }, jwtsecret)
-              console.log(user);
+              this.logger.info(user);
             return {token: "Bearer " + token, user: typeUser == "needy" ? user : { login: user.login, phone: user.phone, id: user._id }, error: null}
         },
         async login(params, typeUser) {

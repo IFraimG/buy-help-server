@@ -42,7 +42,7 @@ module.exports = {
                     
                     return { fcmToken: giver.fcmToken }
                 } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return {message: error.message}
                 }
             }
@@ -85,7 +85,7 @@ module.exports = {
                     const result = await giver.save()
                     return result
                   } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     ctx.meta.$statusCode = 400
                     return {message: error.message}
                   
@@ -113,7 +113,7 @@ module.exports = {
                     
                     return giver
                   } catch (error) {
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return {message: error.message}
                   }
             }
@@ -163,7 +163,7 @@ module.exports = {
                     return { market: giver.market }
                   } catch (error) {
                     ctx.meta.$statusCode = 404
-                    console.log(error.message);
+                    this.logger.info(error.message);
                     return { message: error.message }
                   }
             }
