@@ -57,26 +57,45 @@ module.exports = {
                 market: { type: "string" }
             },
             async handler(ctx) {
-                let market = ctx.params.market
-
-                const currentDate = dayjs().tz("Europe/Moscow").format('YYYY-MM-DD HH:mm:ss');
-                if ((dayjs(currentDate).hour() >= 23 || dayjs(currentDate).hour() < 10)) {
-                    await this.adapter.model.deleteMany({ isSuccessDone: false })
-                    let result = await this.getActiveController(market)
-                    return result
-                }
-    
-                let result = await this.broker.call("needy.getByMarket", { market: market })
-                for (item of result) {
-                    const advert = await this.adapter.model.findOne({ authorID: item._id, isSuccessDone: false }).exec()
-                    if (advert == null) continue
-    
-                    const advertDate = dayjs(advert.dateDone) 
-                    const diffInHours = dayjs(currentDate).diff(advertDate, 'hour');    
-                    if (diffInHours > 2) {
-                        await this.adapter.model.deleteOne({ authorID: item._id, isSuccessDone: false })
-                        return { message: "Done!" }
+                try {
+                    let market = ctx.params.market
+                    if (market == null) {
+                        ctx.meta.$statusCode = 404
+                        return { message: "NotFound" }
                     }
+
+                    const currentDate = dayjs().tz("Europe/Moscow").format('YYYY-MM-DD HH:mm:ss');
+                    if ((dayjs(currentDate).hour() >= 23 || dayjs(currentDate).hour() < 10)) {
+                        await this.adapter.model.deleteMany({ isSuccessDone: false })
+                        let result = await this.getActiveController(market)
+                        if (result.error != null) {
+                            ctx.meta.$statusCode = 404
+                            return result.error
+                        }
+
+                        return result
+                    }
+        
+                    let result = await this.broker.call("needy.getByMarket", { market: market })
+                    for (item of result) {
+                        const advert = await this.adapter.model.findOne({ authorID: item._id, isSuccessDone: false }).exec()
+                        if (advert == null) continue
+        
+                        const advertDate = dayjs(advert.dateDone) 
+                        const diffInHours = dayjs(currentDate).diff(advertDate, 'hour');    
+                        if (diffInHours > 2) await this.adapter.model.deleteOne({ authorID: item._id, isSuccessDone: false })
+                    }
+
+                    let foo = await this.getActiveController(market)
+                    if (foo.error != null) {
+                        ctx.meta.$statusCode = 404
+                        return foo.error
+                    }
+
+                    return foo
+                } catch (err) {
+                    ctx.meta.$statusCode = 400
+                    return { message: err.message }
                 }
             }
         },
@@ -114,21 +133,15 @@ module.exports = {
                     await this.adapter.model.findOneAndUpdate({ authorID: info.authorID, isSuccessDone: false }, { isSuccessDone: true })
                 
                     const advertID = generateRandomString(10)
-                    const advertisement = new Advertisement({ 
+                    const advertisement = this.adapter.model.create({ 
                       title: info.title,
                       authorName: info.authorName,
                       advertsID: advertID,
                       authorID: info.authorID,
                       listProducts: info.listProducts
                     })
-                  
-                    try {
-                      await advertisement.save()
-                      return advertisement
-                    } catch (err) {
-                      console.log(err);
-                      return { message: err.message }
-                    }
+                    
+                    return advertisement
                   } catch (err) {
                     console.log(err.message);
                     return { message: err.message }
@@ -271,7 +284,7 @@ module.exports = {
        async getActiveController(market) {
             try {
                 let needies = await this.broker.call("needy.getByMarket", { market: market })
-                if (needies == null) return { message: "NotFound" }
+                if (needies == null) return {error: {message: "NotFound", statusCode: 404 }}
                 const adverts = []
             
                 for (item of needies) {
@@ -279,8 +292,8 @@ module.exports = {
                     if (advert != null) adverts.push(advert)
                 }
             
-                if (adverts.length == 0) return { message: "NotFound" }
-                return { result: adverts }
+                if (adverts.length == 0) return {error: {message: "NotFound", statusCode: 404 }}
+                return { result: adverts, error: null }
             } catch (err) {
                 console.log(err.message);
                 return { message: err.message }

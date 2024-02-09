@@ -14,15 +14,25 @@ module.exports = {
                 data: { type: "array" }
             },
             async handler(ctx) {
+                console.log(ctx.params);
                 let chat = await this.adapter.model.findOne({ users: ctx.params.data }).exec()
                 if (chat != null) return chat
                     
-                let user = await this.broker.call("needy.findByID", {id: data[1]})
+                let user = await this.broker.call("needy.findById", {id: ctx.params.data[1]})
                 let title = "Новый чат"
                 if (user != null) title = user.login
 
-                chat = this.adapter.model.create({ title: title, users: data })
+                chat = this.adapter.model.create({ title: title, users: ctx.params.data })
                 return chat
+            }
+        },
+        findChatByUserID: {
+            params: {
+                userID: { type: "string" }
+            },
+            async handler(ctx) {
+                let result = await Chat.find({ users: { $elemMatch: { $regex: ctx.params.userID, $options: 'i' } } }).exec()
+                return result
             }
         }
     }

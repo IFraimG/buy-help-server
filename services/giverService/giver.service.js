@@ -14,14 +14,15 @@ module.exports = {
         setMarket: {
             rest: "PUT /set_market",
             params: {
-                
+                userID: { type: "string" },
+                market: { type: "string" },
             },
             async handler(ctx) {
                 try {
-                    let result = await this.adapter.model.findByIdAndUpdate(ctx.params.userID, { market: ctx.params.market }).exec()
+                    let result = await this.adapter.model.findByIdAndUpdate(ctx.params.userID, { market: ctx.params.market })
                     return result
                   } catch (error) {
-                    ctx.meta.$statusCode = 404
+                    ctx.meta.$statusCode = 400
                     return {message: error.message}
                   }
             }
@@ -78,7 +79,7 @@ module.exports = {
                     if (ctx.params?.password.length > 0) {
                       const salt = await bcrypt.genSalt(10)
                       const password = await bcrypt.hash(ctx.params.password, salt);
-                      needy.password = password
+                      giver.password = password
                     }
 
                     const result = await giver.save()
@@ -91,9 +92,17 @@ module.exports = {
                   }
             }
         },
+        findById: {
+            params: {
+                id: {type: "string"}
+            },
+            async handler(ctx) {
+                let result = await this.adapter.model.findById(ctx.params.id).exec()
+                return result
+            }
+        },
         changeToken: {
             rest: "PUT /change_token",
-            params: {},
             async handler(ctx) {
                 try {
                     let giver = await this.adapter.model.findByIdAndUpdate(ctx.params.userID, { fcmToken: ctx.params.token }).exec()
@@ -110,14 +119,14 @@ module.exports = {
             }
         },
         getLoginPhoneData: {
-            params: {
-                login: {type: "string"},
-                phone: {type: "string"}
-            },
             async handler(ctx) {
-                const isGiverWithLogin = await this.adapter.model.findOne({ login: ctx.params.login }).exec()
-                const isGiverWithPhone = await this.adapter.model.findOne({ phone: ctx.params.phone }).exec()
-                let isUser = await this.adapter.model.findOne({ login: ctx.params.login, phone: ctx.params.phone }).exec()
+                let isGiverWithLogin = null
+                let isGiverWithPhone = null
+                let isUser = null
+
+                if (ctx.params?.login != null) isGiverWithLogin = await this.adapter.model.findOne({ login: ctx.params.login }).exec()
+                if (ctx.params?.phone != null) isGiverWithPhone = await this.adapter.model.findOne({ phone: ctx.params.phone }).exec()
+                if (ctx.params?.phone != null && ctx.params?.login != null) isUser = await this.adapter.model.findOne({ login: ctx.params.login, phone: ctx.params.phone }).exec()
                 
                 return { isLogin: isGiverWithLogin != null, isPhone: isGiverWithPhone != null, isUser: isUser != null, userForLogin: isGiverWithLogin }
             }
@@ -139,7 +148,26 @@ module.exports = {
                 }
             }
         },
-
+        getPinMarket: {
+            rest: "GET /get_pin_market",
+            params: {
+                userID: { type: "string" }
+            },
+            async handler(ctx) {
+                try {
+                    let giver = await this.adapter.model.findById(ctx.params.userID)
+                    if (giver?.market == null) {
+                        ctx.meta.$statusCode = 404
+                        return { message: "Error" }
+                    }
+                    return { market: giver.market }
+                  } catch (error) {
+                    ctx.meta.$statusCode = 404
+                    console.log(error.message);
+                    return { message: error.message }
+                  }
+            }
+        }
     },
     methods: {
         setMarket() {},

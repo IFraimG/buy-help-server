@@ -8,15 +8,6 @@ module.exports = {
     mixins: [ApiService],
 	settings: {
 		routes: [
-            // {
-            //     path: "/auth",
-            //     aliases: {
-            //         "GET /giver/test": "auth.testGiver",
-            //         "GET /needy/test": "auth.testNeedy"
-            //     },
-            //     authorization: true,
-			// 	authentication: true,
-            // },
             {
 				path: "/auth",
 				authorization: false,
@@ -42,10 +33,10 @@ module.exports = {
                     "auth.testNeedy"
                 ],
                 autoAliases: true,
-                // bodyParsers: {
-                //     json: true,
-                //     urlencoded: { extended: true }
-                // },
+                bodyParsers: {
+                    json: true,
+                    urlencoded: { extended: true }
+                },
                 authentication: true,
                 authorization: true
                 // mergeParams: false

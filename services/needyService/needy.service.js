@@ -13,12 +13,16 @@ module.exports = {
     actions: {
         setMarket: {
             rest: "PUT /set_market",
+            params: {
+                userID: { type: "string" },
+                market: { type: "string" },
+            },
             async handler(ctx) {
                 try {
-                    let result = await this.adapter.model.findByIdAndUpdate(ctx.params.userID, { market: ctx.params.market }).exec()
+                    let result = await this.adapter.model.findByIdAndUpdate(ctx.params.userID, { market: ctx.params.market })
                     return result
                   } catch (error) {
-                    ctx.meta.$statusCode = 404
+                    ctx.meta.$statusCode = 400
                     return {message: error.message}
                   }
             }
@@ -41,6 +45,15 @@ module.exports = {
                     console.log(error.message);
                     return {message: error.message}
                 }
+            }
+        },
+        getByMarket: {
+            params: {
+                market: { type: "string" }
+            },
+            async handler(ctx) {
+                let result = await this.adapter.model.find({ market: ctx.params.market }).exec()
+                return result
             }
         },
         editProfile: {
@@ -106,15 +119,6 @@ module.exports = {
                   }
             }
         },
-        getByMarket: {
-            params: {
-                market: { type: "string" }
-            },
-            async handler(ctx) {
-                let result = await this.adapter.model.find({ market: ctx.params.market }).exec()
-                return result
-            }
-        },
         create: {
             params: {
                 password: {type: "string"},
@@ -144,13 +148,33 @@ module.exports = {
                 return { isLogin: isNeedyWithLogin != null, isPhone: isNeedyWithPhone != null, isUser: isNeedy != null, userForLogin: isNeedyWithPhone }
             }
         },
-        findByID: {
+        findById: {
             params: {
                 id: {type: "string"}
             },
             async handler(ctx) {
                 let result = await this.adapter.model.findById(ctx.params.id).exec()
                 return result
+            }
+        },
+        getPinMarket: {
+            rest: "GET /get_pin_market",
+            params: {
+                userID: { type: "string" }
+            },
+            async handler(ctx) {
+                try {
+                    let needy = await this.adapter.model.findById(ctx.params.userID)
+                    if (needy?.market == null) {
+                        ctx.meta.$statusCode = 404
+                        return { message: "Error" }
+                    }
+                    return { market: needy.market }
+                  } catch (error) {
+                    ctx.meta.$statusCode = 404
+                    console.log(error.message);
+                    return { message: error.message }
+                  }
             }
         }
     },

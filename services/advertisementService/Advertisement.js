@@ -44,10 +44,6 @@ const AdvertisementSchema = new mongoose.Schema({
     userDoneID: {
         type: String, 
         required: false
-    },
-    advertID: {
-        type: String,
-        required: false
     }
 })
 

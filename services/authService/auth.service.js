@@ -106,7 +106,7 @@ module.exports = {
                 type: typeUser,
               }, jwtsecret)
               console.log(user);
-            return {token: "Bearer " + token, user: { login: user.login, phone: user.phone, id: user._id }, error: null}
+            return {token: "Bearer " + token, user: typeUser == "needy" ? user : { login: user.login, phone: user.phone, id: user._id }, error: null}
         },
         async login(params, typeUser) {
             let user = await this.broker.call(`${typeUser}.getLoginPhoneData`, { login: params.login, phone: params.phone })
@@ -123,7 +123,7 @@ module.exports = {
                   type: typeUser,
                 }, jwtsecret)
 
-                return {token: "Bearer " + token, user: { login: user.userForLogin.login, phone: user.userForLogin.phone, id: user.userForLogin._id }, error: null}
+                return {token: "Bearer " + token, user: typeUser == "needy" ? user.userForLogin : { login: user.userForLogin.login, phone: user.userForLogin.phone, id: user.userForLogin._id }, error: null}
             }
         }
     }

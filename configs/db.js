@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 require("dotenv").config();
 
+// NOT USED!
 (async function() {
     try {
         await mongoose.connect(process.env.DB_CONNECT, { useNewUrlParser: true, useUnifiedTopology: true });
