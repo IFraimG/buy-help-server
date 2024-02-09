@@ -110,7 +110,7 @@ module.exports = {
         },
         async login(params, typeUser) {
             let user = await this.broker.call(`${typeUser}.getLoginPhoneData`, { login: params.login, phone: params.phone })
-            if (!user.isLogin) return {error: { statusCode: 404 }, token: ""}
+            if (!user.isLogin || user.userForLogin == null) return {error: { statusCode: 404 }, token: ""}
             
             const match = await bcrypt.compare(params.password, user.userForLogin.password);
             if (!match) return {error: { statusCode: 400 }, token: ""}
